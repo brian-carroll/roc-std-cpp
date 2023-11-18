@@ -3,4 +3,4 @@
 *.o
 *.dSYM
 a.out
-/test/run
+/run-tests

@@ -2,13 +2,14 @@ CC = clang++
 CFLAGS = -g -Wall
 HEADERS = $(wildcard src/*.h)
 
-all: test/run
+all: run-tests
 
-test/run: test/main.cpp $(HEADERS)
+run-tests: test/main.cpp $(HEADERS)
 	$(CC) $(CFLAGS) -Isrc -o $@ $<
 
-check: test/run
-	test/run
+check: run-tests
+	./run-tests
 
 clean:
-	rm -f test/run **/*.o
+	rm -f run-tests
+	rm -rf run-tests.dSYM
