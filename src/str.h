@@ -1,12 +1,13 @@
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <string.h>
 #include "alloc.h"
 
 namespace Roc
 {
-    #define SMALL_STRING_SIZE sizeof(struct roc_big_str)
-    #define REFCOUNT_SIZE sizeof(size_t)
+#define SMALL_STRING_SIZE sizeof(struct roc_big_str)
+#define REFCOUNT_SIZE sizeof(size_t)
 
     struct roc_big_str
     {
@@ -24,18 +25,27 @@ namespace Roc
         };
 
     public:
+        Str(const char *cstr)
+        {
+            Str(cstr, 0);
+        }
+
         Str(const char *cstr, size_t requested_capacity)
         {
             size_t len = strlen(cstr);
+
+            printf("ctor len = %zd\n", len);
 
             if (len < SMALL_STRING_SIZE)
             {
                 big = {};
                 memcpy(small, cstr, len);
                 small[SMALL_STRING_SIZE - 1] = len | 0x80;
+                printf("ctor small %d\n", small[SMALL_STRING_SIZE - 1]);
             }
             else
             {
+                printf("big\n");
                 size_t capacity = requested_capacity < len ? len : requested_capacity;
                 size_t alloc_size = REFCOUNT_SIZE + capacity;
                 void *allocation = roc_alloc(alloc_size, REFCOUNT_SIZE);
@@ -50,6 +60,8 @@ namespace Roc
 
         ~Str()
         {
+            printf("destructor %d\n", is_small_str());
+
             if (!is_small_str())
             {
                 char *allocation = big.bytes - REFCOUNT_SIZE;
@@ -65,7 +77,7 @@ namespace Roc
         size_t length()
         {
             return is_small_str()
-                       ? small[SMALL_STRING_SIZE - 1] & 0x7f
+                       ? (size_t)(small[SMALL_STRING_SIZE - 1] & 0x7f)
                        : big.length;
         }
 
