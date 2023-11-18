@@ -25,27 +25,18 @@ namespace Roc
         };
 
     public:
-        Str(const char *cstr)
-        {
-            Str(cstr, 0);
-        }
-
-        Str(const char *cstr, size_t requested_capacity)
+        Str(const char *cstr, size_t requested_capacity = 0)
         {
             size_t len = strlen(cstr);
-
-            printf("ctor len = %zd\n", len);
 
             if (len < SMALL_STRING_SIZE)
             {
                 big = (struct roc_big_str){};
                 memcpy(small, cstr, len);
                 small[SMALL_STRING_SIZE - 1] = len | 0x80;
-                printf("ctor small %d\n", small[SMALL_STRING_SIZE - 1]);
             }
             else
             {
-                printf("big\n");
                 size_t capacity = requested_capacity < len ? len : requested_capacity;
                 size_t alloc_size = REFCOUNT_SIZE + capacity;
                 void *allocation = roc_alloc(alloc_size, REFCOUNT_SIZE);
@@ -60,8 +51,6 @@ namespace Roc
 
         ~Str()
         {
-            printf("destructor %d\n", is_small_str());
-
             if (!is_small_str())
             {
                 char *allocation = big.bytes - REFCOUNT_SIZE;

@@ -1,9 +1,10 @@
 CC = clang++
 CFLAGS = -g -Wall
+HEADERS = $(wildcard src/*.h)
 
 all: test/run
 
-test/run: test/main.cpp
+test/run: test/main.cpp $(HEADERS)
 	$(CC) $(CFLAGS) -Isrc -o $@ $<
 
 check: test/run
