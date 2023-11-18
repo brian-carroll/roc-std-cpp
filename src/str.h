@@ -1,6 +1,6 @@
+#pragma once
+
 #include <cstddef>
-#include <cstdint>
-#include <cstdio>
 #include <string.h>
 #include "alloc.h"
 
@@ -25,7 +25,7 @@ namespace Roc
         };
 
     public:
-        Str(const char *cstr, size_t requested_capacity = 0)
+        Str(const char *cstr = "", size_t requested_capacity = 0)
         {
             size_t len = strlen(cstr);
 
