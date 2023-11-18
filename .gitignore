@@ -1,4 +1,6 @@
 /.vscode
 *.gch
 *.o
+*.dSYM
 a.out
+/test/run

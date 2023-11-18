@@ -38,7 +38,7 @@ namespace Roc
 
             if (len < SMALL_STRING_SIZE)
             {
-                big = {};
+                big = (struct roc_big_str){};
                 memcpy(small, cstr, len);
                 small[SMALL_STRING_SIZE - 1] = len | 0x80;
                 printf("ctor small %d\n", small[SMALL_STRING_SIZE - 1]);
