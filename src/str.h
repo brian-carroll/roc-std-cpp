@@ -6,15 +6,16 @@
 
 namespace Roc
 {
-#define SMALL_STRING_SIZE sizeof(struct roc_big_str)
-#define REFCOUNT_SIZE sizeof(size_t)
-
     struct roc_big_str
     {
         char *bytes;
         size_t length;
         size_t capacity;
     };
+
+    const size_t SMALL_STRING_SIZE = sizeof(struct roc_big_str);
+    const size_t SMALL_STRING_MAXLEN = SMALL_STRING_SIZE - 1;
+    const size_t REFCOUNT_SIZE = sizeof(size_t);
 
     class Str
     {
@@ -31,7 +32,7 @@ namespace Roc
 
             if (len < SMALL_STRING_SIZE)
             {
-                big = (struct roc_big_str){};
+                big = {};
                 memcpy(small, cstr, len);
                 small[SMALL_STRING_SIZE - 1] = len | 0x80;
             }

@@ -4,8 +4,8 @@ HEADERS = $(wildcard src/*.h) $(wildcard test/lib/*.h)
 
 all: run-tests
 
-run-tests: test/main.cpp $(HEADERS)
-	$(CC) $(CFLAGS) -Isrc -Itest/lib -o $@ $<
+run-tests: test/*.cpp $(HEADERS)
+	$(CC) $(CFLAGS) -Isrc -Itest/lib -o $@ test/main.cpp
 
 check: run-tests
 	./run-tests
