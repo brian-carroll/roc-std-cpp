@@ -6,6 +6,7 @@
 #include "lib/simpletest.cpp"
 #include "alloc.cpp"
 #include "str.cpp"
+#include "list.cpp"
 
 char const *groups[] = {
     "Str",

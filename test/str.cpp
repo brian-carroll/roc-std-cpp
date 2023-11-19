@@ -1,7 +1,6 @@
 #include "str.h"
 #include "alloc.h"
 #include "lib/simpletest.h"
-#include <cstdio>
 #include <cstring>
 
 bool same_representation(Roc::Str *s, const char *bytes)
