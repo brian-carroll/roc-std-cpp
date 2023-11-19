@@ -9,28 +9,28 @@ namespace Roc
     template <typename T>
     class List
     {
-        T *elements;
-        size_t length;
-        size_t capacity;
+        T *m_elements;
+        size_t m_length;
+        size_t m_capacity;
 
-        static size_t alignment()
+        static size_t alloc_alignment()
         {
             return (alignof(T) > alignof(size_t)) ? alignof(T) : alignof(size_t);
         }
 
-        char *allocation()
+        char *allocation() const
         {
-            return (char *)elements - List<T>::alignment();
+            return (char *)m_elements - List<T>::alloc_alignment();
         }
 
-        size_t allocation_size()
+        size_t allocation_size() const
         {
-            return (capacity * sizeof(T)) + List<T>::alignment();
+            return (m_capacity * sizeof(T)) + List<T>::alloc_alignment();
         }
 
-        ptrdiff_t *refcount_ptr()
+        ptrdiff_t *refcount_ptr() const
         {
-            return (ptrdiff_t *)elements - 1;
+            return (ptrdiff_t *)m_elements - 1;
         }
 
     public:
@@ -43,11 +43,11 @@ namespace Roc
 
             if (cap == 0)
             {
-                elements = NULL;
+                m_elements = NULL;
             }
             else
             {
-                size_t alignment = List<T>::alignment();
+                size_t alignment = List<T>::alloc_alignment();
                 size_t rc_space = alignment;
                 size_t rc_offset = rc_space - sizeof(size_t);
                 size_t elems_offset = rc_space;
@@ -55,31 +55,41 @@ namespace Roc
                 char *alloc = (char *)roc_alloc(alloc_size, (uint32_t)alignment);
                 ptrdiff_t *refcount = (ptrdiff_t *)(alloc + rc_offset);
                 *refcount = REFCOUNT_ONE;
-                elements = alloc + elems_offset;
+                m_elements = (T *)(alloc + elems_offset);
 
                 if (elems != NULL)
                 {
-                    memcpy(elements, elems, len * sizeof(T));
+                    memcpy(m_elements, elems, len * sizeof(T));
                 }
             }
 
-            length = len;
-            capacity = cap;
+            m_length = len;
+            m_capacity = cap;
         }
 
         ~List()
         {
-            if (elements != NULL)
+            if (m_elements != NULL)
             {
-                for (size_t i = 0; i < length; i++)
-                    elements[i].~T();
-                roc_dealloc(allocation(), (uint32_t)List<T>::alignment());
+                for (size_t i = 0; i < m_length; i++)
+                    m_elements[i].~T();
+                roc_dealloc(allocation(), (uint32_t)List<T>::alloc_alignment());
             }
         }
 
-        bool is_unique()
+        size_t length() const
         {
-            if (elements == NULL)
+            return m_length;
+        }
+
+        size_t capacity() const
+        {
+            return m_capacity;
+        }
+
+        bool is_unique() const
+        {
+            if (m_elements == NULL)
                 return true;
             return *refcount_ptr() == REFCOUNT_ONE;
         }
@@ -89,7 +99,7 @@ namespace Roc
          */
         void reserve(size_t num_extra_elems)
         {
-            if (elements == NULL)
+            if (m_elements == NULL)
             {
                 *this = List<T>(NULL, 0, num_extra_elems);
             }
@@ -101,22 +111,21 @@ namespace Roc
                     old_alloc,
                     old_alloc_size + num_extra_elems,
                     old_alloc_size,
-                    List<T>::alignment());
+                    List<T>::alloc_alignment());
                 if (new_alloc == old_alloc)
                 {
                     // We've allocated in place!
-                    capacity += num_extra_elems;
+                    m_capacity += num_extra_elems;
                 }
                 else
                 {
                     // We got back a different allocation; copy the existing elements
-                    // into it. We don't need to increment their refcounts because
-                    // The existing allocation that references to them is now gone and
-                    // no longer referencing them.
+                    // into it. We don't need to change their refcounts because we're
+                    // just swapping one reference for another.
                     memcpy(new_alloc, old_alloc, old_alloc_size);
-                    roc_dealloc(old_alloc, List<T>::alignment());
-                    elements = (T *)((char *)new_alloc + List<T>::alignment());
-                    capacity += num_extra_elems;
+                    roc_dealloc(old_alloc, List<T>::alloc_alignment());
+                    m_elements = (T *)((char *)new_alloc + List<T>::alloc_alignment());
+                    m_capacity += num_extra_elems;
                 }
             }
             else
@@ -125,7 +134,7 @@ namespace Roc
                 // Reduce refcount of the old allocation, and create a new List.
                 // The element refcounts don't change, as we're removing one and adding one.
                 (*refcount_ptr())--;
-                *this = List<T>(elements, length, capacity + num_extra_elems);
+                *this = List<T>(m_elements, m_length, m_capacity + num_extra_elems);
             }
         }
     };

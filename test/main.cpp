@@ -10,6 +10,7 @@
 
 char const *groups[] = {
     "Str",
+    "List",
 };
 
 int main()
