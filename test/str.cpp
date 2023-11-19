@@ -1,9 +1,10 @@
 #include "str.h"
 #include "alloc.h"
+#include "lib/simpletest.h"
 #include <cstdio>
 
-void test_str_len()
+DEFINE_TEST_G(TestLength, Str)
 {
     Roc::Str s("hello");
-    printf("String length is %zd\n", s.length());
+	TEST_EQ(s.length(), 5);
 }

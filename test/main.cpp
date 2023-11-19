@@ -3,11 +3,22 @@
 #include <cstdio>
 
 // Single translation unit compilation. Include all the source files here.
+#include "lib/simpletest.cpp"
 #include "alloc.cpp"
 #include "str.cpp"
 
+char const *groups[] = {
+    "Str",
+};
+
 int main()
 {
-    test_str_len();
-    return 0;
+    bool pass = true;
+
+    for (auto group : groups)
+    {
+        pass &= TestFixture::ExecuteTestGroup(group, TestFixture::Verbose);
+    }
+
+    return pass ? 0 : 1;
 }
