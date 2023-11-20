@@ -8,7 +8,7 @@
 //---------------------------------------------------------------------------------
 // statics
 //---------------------------------------------------------------------------------
-void DefaultPrint(char const* string) { printf("%s", string); }
+void DefaultPrint(char const* string) { fputs(string, stdout); }
 
 TestFixture* TestFixture::ourFirstTest;
 TestFixture* TestFixture::ourLastTest;
@@ -314,7 +314,17 @@ static bool locExecuteTest(TestFixture* test, TestFixture::OutputMode output)
 		if (output == TestFixture::Verbose)
 		{
 			clock_t end = clock();
-			TestFixture::Printf(": Passed %d out of %d tests in %g seconds\n", test->NumTests(), test->NumTests(), float(end - start) / (float)CLOCKS_PER_SEC);
+			// Convert elapsed time to an integer to avoid printing floats.
+			// Rendering floats to string requires heap allocations within libc,
+			// and we try to avoid allocation in the test framework.
+			int time_int = (int)((end - start) * 1000000 / CLOCKS_PER_SEC);
+			const char* time_unit = "us";
+			if (time_int > 1000)
+			{
+				time_int /= 1000;
+				time_unit = "ms";
+			}
+			TestFixture::Printf(": Passed %d out of %d tests in %d%s\n", test->NumTests(), test->NumTests(), time_int, time_unit);
 		}
 		return true;
 	}
