@@ -23,8 +23,17 @@ DEFINE_TEST_G(FromArrayOfStruct, List)
     SomeStruct elems[5] = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}};
     size_t len = sizeof(elems) / sizeof(elems[0]);
     Roc::List<SomeStruct> list(elems, len);
-    TEST(list.length() == len); // FIXME: This is segfaulting intermittently
+    TEST(list.length() == len);
     TEST(list.capacity() == len);
+}
+
+DEFINE_TEST_G(ReserveSmall, List)
+{
+    Roc::List<SomeStruct> list;
+    size_t cap = 42;
+    list.reserve(cap);
+    TEST(list.length() == 0);
+    TEST(list.capacity() == cap);
 }
 
 /*
