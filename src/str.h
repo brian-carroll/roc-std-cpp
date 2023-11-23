@@ -17,13 +17,18 @@ namespace Roc
     const size_t SMALL_STRING_MAXLEN = SMALL_STRING_SIZE - 1;
     const size_t REFCOUNT_SIZE = sizeof(size_t);
 
-    class Str
+    class Str : Value
     {
         union
         {
             struct roc_big_str big;
             char small[SMALL_STRING_SIZE];
         };
+
+        ptrdiff_t inline *refcount_ptr() const
+        {
+            return (ptrdiff_t *)big.bytes - 1;
+        }
 
 #ifdef DEBUG
         void debug_representation()
@@ -76,7 +81,7 @@ namespace Roc
             }
         }
 
-        bool is_small_str()
+        bool is_small_str() const
         {
             return small[SMALL_STRING_SIZE - 1] < 0;
         }
@@ -95,7 +100,7 @@ namespace Roc
                        : big.capacity;
         }
 
-        bool is_unique()
+        bool rc_unique() const
         {
             if (is_small_str())
             {
@@ -103,6 +108,45 @@ namespace Roc
             }
             ptrdiff_t *refcount = (ptrdiff_t *)big.bytes - REFCOUNT_SIZE;
             return *refcount == REFCOUNT_ONE;
+        }
+
+        void rc_increment()
+        {
+            if (is_small_str())
+                return;
+            if (big.bytes == NULL)
+            {
+                roc_panic("Attempted to increment refcount of freed allocation", 0);
+                return;
+            }
+            ptrdiff_t *refcount = refcount_ptr();
+            *refcount += 1;
+        }
+
+        void rc_decrement()
+        {
+            if (is_small_str())
+                return;
+            if (big.bytes == NULL)
+            {
+                roc_panic("Attempted to decrement refcount of freed allocation", 0);
+                return;
+            }
+            ptrdiff_t *refcount = refcount_ptr();
+            if (*refcount == REFCOUNT_ONE)
+            {
+                // We're the only owner of this allocation, so we can just free it.
+                // The refcount is at the beginning of the allocation.
+                roc_dealloc(refcount, alignof(ptrdiff_t));
+                big.bytes = NULL;
+                big.length = 0;
+                big.capacity = 0;
+            }
+            else
+            {
+                // There are other references to this allocation, so we need to reduce the refcount.
+                *refcount -= 1;
+            }
         }
     };
 };

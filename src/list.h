@@ -7,7 +7,7 @@
 namespace Roc
 {
     template <typename T>
-    class List
+    class List : Value
     {
         T *m_elements;
         size_t m_length;
@@ -97,11 +97,53 @@ namespace Roc
             return m_capacity;
         }
 
-        bool is_unique() const
+        bool rc_unique() const
         {
-            if (m_elements == NULL)
-                return true;
-            return *refcount_ptr() == REFCOUNT_ONE;
+            return m_elements == NULL || *refcount_ptr() == REFCOUNT_ONE;
+        }
+
+        void rc_increment()
+        {
+            if (m_elements == NULL) {
+                roc_panic("Attempted to increment refcount of freed allocation", 0);
+                return;
+            }
+            ptrdiff_t *refcount = refcount_ptr();
+            *refcount += 1;
+            for (size_t i = 0; i < m_length; i++)
+            {
+                Value *elem = &m_elements[i];
+                elem->rc_increment();
+            }
+        }
+
+        void rc_decrement()
+        {
+            if (m_elements == NULL) {
+                roc_panic("Attempted to decrement refcount of freed allocation", 0);
+                return;
+            }
+
+            for (size_t i = 0; i < m_length; i++)
+            {
+                Value *elem = &m_elements[i];
+                elem->rc_decrement();
+            }
+
+            ptrdiff_t *refcount = refcount_ptr();
+            if (*refcount == REFCOUNT_ONE)
+            {
+                roc_dealloc(allocation(), List<T>::alloc_alignment());
+                m_elements = NULL;
+                m_length = 0;
+                m_capacity = 0;
+            }
+            else if (*refcount > REFCOUNT_ONE)
+            {
+                // There are other owners of this allocation, so we need to reduce the refcount.
+                // We don't need to do anything else, as we're not removing any elements.
+                *refcount -= 1;
+            }
         }
 
         /**
@@ -113,7 +155,7 @@ namespace Roc
             {
                 create_new_allocation(num_extra_elems);
             }
-            else if (is_unique())
+            else if (rc_unique())
             {
                 char *old_alloc = allocation();
                 size_t old_alloc_size = allocation_size();
@@ -141,10 +183,18 @@ namespace Roc
             else
             {
                 // This allocation is shared. We need a new, bigger one.
-                // Reduce refcount of the old allocation, and create a new List.
-                // The element refcounts don't change, as we're removing one and adding one.
-                (*refcount_ptr())--;
-                *this = List<T>(m_elements, m_length, m_capacity + num_extra_elems);
+
+                // Reduce refcount of the old allocation. This List isn't going to use it any more.
+                ptrdiff_t *refcount = refcount_ptr();
+                *refcount -= 1;
+
+                // Allocate a new one
+                T* old_elems = m_elements;
+                create_new_allocation(m_capacity + num_extra_elems);
+
+                // Copy the elements into the new allocation.
+                // The element refcounts don't change, we're just swapping one ref for another.
+                memcpy(m_elements, old_elems, m_length * sizeof(T));
             }
         }
     };

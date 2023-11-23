@@ -17,3 +17,21 @@ void *roc_memset(void *ptr, int value, size_t num_bytes);
 #else
 #define DEBUG_PRINT(...)
 #endif
+
+namespace Roc
+{
+    /**
+     * Base class for all Roc value types
+     * Implements common logic like reference counting.
+     * We don't use virtual functions because we want to avoid the vtable.
+     */
+    class Value
+    {
+    public:
+        // Default implementation assumes no heap allocation
+        // Valid for numbers, records, etc.
+        bool rc_unique() const { return true; };
+        void rc_increment() {};
+        void rc_decrement() {};
+    };
+};
