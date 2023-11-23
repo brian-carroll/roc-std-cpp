@@ -1,5 +1,5 @@
 #include "str.h"
-#include "alloc.h"
+#include "internal.h"
 #include <cstdio>
 
 // Single translation unit compilation. Include all the source files here.

@@ -2,7 +2,7 @@
 
 #include <cstddef>
 #include <string.h>
-#include "alloc.h"
+#include "internal.h"
 
 namespace Roc
 {

@@ -1,5 +1,5 @@
 #include "list.h"
-#include "alloc.h"
+#include "internal.h"
 #include "lib/simpletest.h"
 #include <cstdio>
 

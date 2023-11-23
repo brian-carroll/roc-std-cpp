@@ -10,3 +10,10 @@ void *roc_realloc(void *ptr, size_t new_size, size_t old_size, size_t alignment)
 void roc_dealloc(void *ptr, uint32_t alignment);
 void roc_panic(const char *message, uint32_t _tag_id);
 void *roc_memset(void *ptr, int value, size_t num_bytes);
+
+#ifdef DEBUG
+#include <cstdio>
+#define DEBUG_PRINT(...) printf(__VA_ARGS__)
+#else
+#define DEBUG_PRINT(...)
+#endif
