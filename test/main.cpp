@@ -8,19 +8,30 @@
 #include "str.cpp"
 #include "list.cpp"
 
-char const *groups[] = {
-    "Str",
-    "List",
-};
-
-int main()
+int main(int argc, char **argv)
 {
-    bool pass = true;
+    char const *groupFilter = nullptr;
+    char const *nameFilter = nullptr;
+    TestFixture::OutputMode output = TestFixture::Normal;
 
-    for (auto group : groups)
+    for (int i = 1; i < argc; ++i)
     {
-        pass &= TestFixture::ExecuteTestGroup(group, TestFixture::Verbose);
+        if (strcmp(argv[i], "--verbose") == 0 || strcmp(argv[i], "-v") == 0)
+        {
+            output = TestFixture::Verbose;
+        }
+        else if (strcmp(argv[i], "--group") == 0 && i + 1 < argc)
+        {
+            groupFilter = argv[i + 1];
+            ++i;
+        }
+        else if (strcmp(argv[i], "--name") == 0 && i + 1 < argc)
+        {
+            nameFilter = argv[i + 1];
+            ++i;
+        }
     }
 
+    bool pass = TestFixture::ExecuteAllTests(groupFilter, nameFilter, output);
     return pass ? 0 : 1;
 }
