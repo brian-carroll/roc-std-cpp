@@ -25,6 +25,23 @@ namespace Roc
             char small[SMALL_STRING_SIZE];
         };
 
+#ifdef DEBUG
+        void debug_representation()
+        {
+            printf("Roc::Str\n");
+            printf("    is_small_str: %s\n", is_small_str() ? "true" : "false");
+            printf("    big.bytes: %p\n", big.bytes);
+            printf("    big.length: %zu\n", big.length);
+            printf("    big.capacity: %zu\n", big.capacity);
+            printf("    small: ");
+            for (size_t i = 0; i < SMALL_STRING_SIZE; i++)
+            {
+                printf("%02x ", (unsigned char)small[i]);
+            }
+            printf("\n");
+        }
+#endif
+
     public:
         Str(const char *cstr = "", size_t requested_capacity = 0)
         {

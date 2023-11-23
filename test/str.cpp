@@ -6,7 +6,25 @@
 bool same_representation(Roc::Str *s, const char *bytes)
 {
     char *str_bytes = (char *)s;
-    return strncmp(str_bytes, bytes, sizeof(Roc::Str)) == 0;
+    bool ok = 0 == strncmp(str_bytes, bytes, sizeof(Roc::Str));
+#ifdef DEBUG
+    if (!ok)
+    {
+        printf("Expected (%p): ", bytes);
+        for (size_t i = 0; i < sizeof(Roc::Str); i++)
+        {
+            printf("%02x ", (unsigned char)bytes[i]);
+        }
+        printf("\n");
+        printf("Actual   (%p): ", str_bytes);
+        for (size_t i = 0; i < sizeof(Roc::Str); i++)
+        {
+            printf("%02x ", (unsigned char)str_bytes[i]);
+        }
+        printf("\n");
+    }
+#endif
+    return ok;
 }
 
 DEFINE_TEST_G(EmptyBytes, Str)
