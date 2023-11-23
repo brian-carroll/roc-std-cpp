@@ -32,27 +32,6 @@ DEFINE_TEST_G(ReserveSmall, List)
     Roc::List<SomeStruct> list;
     size_t cap = 42;
     list.reserve(cap);
-    TEST(list.length() == 0);
-    TEST(list.capacity() == cap);
+    TEST_EQ(list.length(), 0);
+    TEST_EQ(list.capacity(), cap);
 }
-
-/*
-
-    #[test]
-    fn reserve_small_list() {
-        let mut roc_list = RocList::<RocStr>::empty();
-
-        roc_list.reserve(42);
-
-        assert_eq!(roc_list.capacity(), 42);
-    }
-
-    #[test]
-    fn reserve_big_list() {
-        let mut roc_list = RocList::<RocStr>::empty();
-
-        roc_list.reserve(5000);
-
-        assert_eq!(roc_list.capacity(), 5000);
-    }
-*/
