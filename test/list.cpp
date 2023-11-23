@@ -1,7 +1,10 @@
 #include "list.h"
 #include "internal.h"
+#include "num.h"
 #include "lib/simpletest.h"
 #include <cstdio>
+
+namespace Roc {
 
 class SomeValue final : public Roc::Value
 {
@@ -14,19 +17,6 @@ public:
     bool operator==(const SomeValue &other) const
     {
         return a == other.a && b == other.b;
-    }
-};
-
-class I64 final : public Roc::Value 
-{
-    int64_t value;
-
-public:
-    I64(int64_t value) : value(value) {}
-
-    bool operator==(const I64 &other) const
-    {
-        return value == other.value;
     }
 };
 
@@ -60,3 +50,5 @@ DEFINE_TEST_G(ReserveSmall, List)
     TEST_EQ(list.length(), 0);
     TEST_EQ(list.capacity(), cap);
 }
+
+};
