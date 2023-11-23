@@ -51,7 +51,7 @@ namespace Roc
                 size_t rc_space = alignment;
                 size_t rc_offset = rc_space - sizeof(size_t);
                 size_t elems_offset = rc_space;
-                size_t alloc_size = rc_space + cap;
+                size_t alloc_size = rc_space + cap * sizeof(T);
                 char *alloc = (char *)roc_alloc(alloc_size, (uint32_t)alignment);
                 ptrdiff_t *refcount = (ptrdiff_t *)(alloc + rc_offset);
                 *refcount = REFCOUNT_ONE;
