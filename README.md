@@ -19,5 +19,5 @@ Current progress
 - [x] Num
 - [ ] Dict
 - [ ] Set
-- [ ] Box
+- [x] Box
 - [ ] Result

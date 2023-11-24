@@ -1,8 +1,6 @@
 #include "list.h"
-#include "internal.h"
 #include "num.h"
 #include "lib/simpletest.h"
-#include <cstdio>
 
 namespace Roc {
 

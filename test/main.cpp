@@ -7,6 +7,7 @@
 #include "alloc.cpp"
 #include "str.cpp"
 #include "list.cpp"
+#include "box.cpp"
 
 int main(int argc, char **argv)
 {
