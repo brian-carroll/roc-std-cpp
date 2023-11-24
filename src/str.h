@@ -102,6 +102,11 @@ namespace Roc
                        : big.capacity;
         }
 
+        char* contents()
+        {
+            return is_small_str() ? small : big.bytes;
+        }
+
         bool rc_unique() const
         {
             if (is_small_str())
