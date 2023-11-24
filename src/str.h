@@ -61,6 +61,8 @@ namespace Roc
             else
             {
                 size_t capacity = requested_capacity < len ? len : requested_capacity;
+                // round up the capacity to the next alignment boundary
+                capacity = ((capacity + REFCOUNT_SIZE - 1) / REFCOUNT_SIZE) * REFCOUNT_SIZE;
                 size_t alloc_size = REFCOUNT_SIZE + capacity;
                 void *allocation = roc_alloc(alloc_size, REFCOUNT_SIZE);
                 ptrdiff_t *refcount = (ptrdiff_t *)allocation;
