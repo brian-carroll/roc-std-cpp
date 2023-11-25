@@ -112,7 +112,6 @@ namespace Roc
             if (index >= m_length)
             {
                 roc_panic("Attempted to set List element out of bounds", 0);
-                return;
             }
             m_elements[index] = val;
         }
@@ -233,6 +232,7 @@ namespace Roc
 
     // Specialization for zero-sized Roc types
     // C++ does not natively support zero-sized types, so we need to handle them specially.
+    // The logic for length and capacity is the same as normal, but we never allocate.
     template <>
     class List<void> : Value
     {
@@ -242,18 +242,33 @@ namespace Roc
 
     public:
         List(void *elems = NULL, size_t len = 0, size_t cap = 0)
-            : m_elements(elems), m_length(len), m_capacity(cap) {}
+            : m_elements(elems), m_length(len), m_capacity(cap)
+        {
+            if (m_length > m_capacity)
+                m_capacity = m_length;
+        }
         ~List() {}
         size_t length() const { return m_length; }
         size_t capacity() const { return m_capacity; }
         void *elements() const { return m_elements; }
         void *get(size_t index) const { return NULL; }
-        void set(size_t index, const void *val) {}
-        void push(const void *) {}
+        void set(size_t index, const void *val)
+        {
+            if (index >= m_length)
+                roc_panic("Attempted to set List element out of bounds", 0);
+        }
+        void push(const void *)
+        {
+            m_length += 1;
+            if (m_length > m_capacity)
+                m_capacity = m_length;
+        }
         bool rc_unique() const { return true; }
         void rc_increment() {}
         void rc_decrement() {}
-        void reserve(size_t) {}
+        void reserve(size_t extra_elems) {
+            m_capacity += extra_elems;
+        }
     };
 
 };
