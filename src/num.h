@@ -5,10 +5,11 @@
 namespace Roc
 {
     template <typename T>
-    class Num : Value
+    class Num : public Value
     {
     public:
         T value;
+        Num() : value(0) {}
         Num(T value) : value(value) {}
 
         bool operator== (const Num<T> &other) const

@@ -26,7 +26,7 @@ namespace Roc
                 ok = other;
             }
 
-            // This is a problem if O and E are the same type            
+            // This is a problem if O and E are the same type
             ResultPayload(const E &other)
             {
                 err = other;
@@ -45,9 +45,8 @@ namespace Roc
         }
 
         Result(const Result &other)
+            : m_payload(other.m_payload), m_is_ok(other.m_is_ok)
         {
-            m_is_ok = other.m_is_ok;
-            m_payload = other.m_payload;
             rc_increment();
         }
 
