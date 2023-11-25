@@ -20,7 +20,7 @@ void roc_dealloc(void *ptr, uint32_t _alignment)
 
 void roc_panic(const char *message, uint32_t tag_id)
 {
-    fprintf(stderr, "%s", message);
+    fputs(message, stderr);
     exit(tag_id);
 }
 
