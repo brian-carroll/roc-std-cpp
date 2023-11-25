@@ -20,8 +20,20 @@ void roc_dealloc(void *ptr, uint32_t _alignment)
 
 void roc_panic(const char *message, uint32_t tag_id)
 {
-    fputs(message, stderr);
-    exit(tag_id);
+    const char* prefix;
+    switch (tag_id) {
+        case 0:
+            prefix = "Roc crashed with:";
+            break;
+        case 1:
+            prefix = "The program crashed with:";
+            break;
+        default:
+            prefix = "An error occurred:";
+            break;
+    }
+    fprintf(stderr, "%s\n\n\t%s\n", prefix, message);
+    exit(1);
 }
 
 void *roc_memset(void *ptr, int value, size_t num_bytes)
