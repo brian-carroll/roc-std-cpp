@@ -232,4 +232,30 @@ namespace Roc
             }
         }
     };
+
+    // Specialization for zero-sized Roc types
+    // C++ does not natively support zero-sized types, so we need to handle them specially.
+    template <>
+    class List<void> : Value
+    {
+        void *m_elements;
+        size_t m_length;
+        size_t m_capacity;
+
+    public:
+        List(void *elems = NULL, size_t len = 0, size_t cap = 0)
+            : m_elements(elems), m_length(len), m_capacity(cap) {}
+        ~List() {}
+        size_t length() const { return m_length; }
+        size_t capacity() const { return m_capacity; }
+        void *elements() const { return m_elements; }
+        void *get(size_t index) const { return NULL; }
+        void set(size_t index, const void *val) {}
+        void push(const void *) {}
+        bool rc_unique() const { return true; }
+        void rc_increment() {}
+        void rc_decrement() {}
+        void reserve(size_t) {}
+    };
+
 };

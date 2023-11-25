@@ -49,4 +49,12 @@ DEFINE_TEST_G(ReserveSmall, List)
     TEST_EQ(list.capacity(), cap);
 }
 
+DEFINE_TEST_G(Void, List)
+{
+    Roc::List<void> list(NULL, 12, 42);
+    TEST_EQ(list.elements(), NULL);
+    TEST_EQ(list.length(), 12);
+    TEST_EQ(list.capacity(), 42);
+}
+
 };
