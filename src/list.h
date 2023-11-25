@@ -97,6 +97,38 @@ namespace Roc
             return m_capacity;
         }
 
+        T *elements() const
+        {
+            return m_elements;
+        }
+
+        T *get(size_t index) const
+        {
+            if (index >= m_length)
+                return NULL;
+            return &m_elements[index];
+        }
+
+        void set(size_t index, const T &val)
+        {
+            if (index >= m_length)
+            {
+                roc_panic("Attempted to set List element out of bounds", 0);
+                return;
+            }
+            m_elements[index] = val;
+        }
+
+        void push(const T &val)
+        {
+            if (m_length == m_capacity)
+            {
+                reserve(1);
+            }
+            m_elements[m_length] = val;
+            m_length += 1;
+        }
+
         bool rc_unique() const
         {
             return m_elements == NULL || *refcount_ptr() == REFCOUNT_ONE;
@@ -104,7 +136,8 @@ namespace Roc
 
         void rc_increment()
         {
-            if (m_elements == NULL) {
+            if (m_elements == NULL)
+            {
                 roc_panic("Attempted to increment refcount of freed allocation", 0);
                 return;
             }
@@ -119,7 +152,8 @@ namespace Roc
 
         void rc_decrement()
         {
-            if (m_elements == NULL) {
+            if (m_elements == NULL)
+            {
                 roc_panic("Attempted to decrement refcount of freed allocation", 0);
                 return;
             }
@@ -189,7 +223,7 @@ namespace Roc
                 *refcount -= 1;
 
                 // Allocate a new one
-                T* old_elems = m_elements;
+                T *old_elems = m_elements;
                 create_new_allocation(m_capacity + num_extra_elems);
 
                 // Copy the elements into the new allocation.
