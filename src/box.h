@@ -1,8 +1,5 @@
 #pragma once
 
-#include <cstddef>
-#include <string.h>
-#include <new>
 #include "internal.h"
 
 namespace Roc

@@ -1,5 +1,4 @@
-#include "box.h"
-#include "num.h"
+#include "roc_std.h"
 #include "lib/simpletest.h"
 
 DEFINE_TEST_G(Deref, Box)

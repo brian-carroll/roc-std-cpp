@@ -1,5 +1,4 @@
-#include "list.h"
-#include "num.h"
+#include "roc_std.h"
 #include "lib/simpletest.h"
 
 namespace Roc {

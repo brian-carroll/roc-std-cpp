@@ -1,6 +1,4 @@
-#include "str.h"
-#include "internal.h"
-#include <cstdio>
+#include "roc_std.h"
 
 // Single translation unit compilation. Include all the source files here.
 #include "lib/simpletest.cpp"

@@ -1,5 +1,4 @@
-#include "str.h"
-#include "internal.h"
+#include "roc_std.h"
 #include "lib/simpletest.h"
 #include <cstring>
 
