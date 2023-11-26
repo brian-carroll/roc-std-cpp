@@ -1,5 +1,5 @@
 CC = clang++
-CFLAGS = -g -Wall -std=c++11
+CFLAGS = -g -Wall -std=c++14
 ifdef DEBUG
 CFLAGS += -DDEBUG
 endif
