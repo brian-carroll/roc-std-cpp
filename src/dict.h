@@ -77,14 +77,14 @@ namespace Roc
             }
         }
 
-        K *key() const
+        K *key()
         {
             return LAYOUT_KEY_FIRST<K, V>
                        ? &key_first.key
                        : &value_first.key;
         }
 
-        V *value() const
+        V *value()
         {
             return LAYOUT_KEY_FIRST<K, V>
                        ? &key_first.value
@@ -123,11 +123,21 @@ namespace Roc
         void insert(K key, V value)
         {
             DictItem<K, V> item = DictItem<K, V>(key, value);
-            V *existing_value = get(key);
+            V *existing_value = get(&key);
             if (existing_value)
                 *existing_value = value;
             else
                 list.push(item);
+        }
+
+        size_t length() const
+        {
+            return list.length();
+        }
+
+        size_t capacity() const
+        {
+            return list.capacity();
         }
     };
 };

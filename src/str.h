@@ -87,21 +87,21 @@ namespace Roc
             return small[SMALL_STRING_SIZE - 1] < 0;
         }
 
-        size_t length()
+        size_t length() const
         {
             return is_small_str()
                        ? (size_t)(small[SMALL_STRING_SIZE - 1] & 0x7f)
                        : big.length;
         }
 
-        size_t capacity()
+        size_t capacity() const
         {
             return is_small_str()
                        ? SMALL_STRING_SIZE - 1
                        : big.capacity;
         }
 
-        char* contents()
+        const char* contents() const
         {
             return is_small_str() ? small : big.bytes;
         }
@@ -153,6 +153,14 @@ namespace Roc
                 // There are other references to this allocation, so we need to reduce the refcount.
                 *refcount -= 1;
             }
+        }
+
+        bool operator== (const Str &other) const
+        {
+            if (length() != other.length())
+                return false;
+            // Note: we do not require both to be big or small, and we ignore capacity.
+            return memcmp(contents(), other.contents(), length()) == 0;
         }
     };
 };

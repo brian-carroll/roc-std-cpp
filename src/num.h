@@ -10,6 +10,11 @@ namespace Roc
     public:
         T value;
         Num(T value) : value(value) {}
+
+        bool operator== (const Num<T> &other) const
+        {
+            return value == other.value;
+        }
     };
 
     typedef Num<int64_t> I64;
