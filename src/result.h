@@ -113,4 +113,72 @@ namespace Roc
                 m_payload.err.rc_decrement();
         };
     };
+
+    // Specialization for when Ok and Error are the same type
+    template <typename T>
+    class Result<T, T> : Value
+    {
+        T m_payload;
+        bool m_is_ok;
+
+    public:
+        Result() {}
+
+        Result(const Result &other)
+            : m_payload(other.m_payload), m_is_ok(other.m_is_ok)
+        {
+            rc_increment();
+        }
+
+        static Result make_ok(T val)
+        {
+            Result r;
+            r.m_payload = val;
+            r.m_is_ok = true;
+            return r;
+        }
+
+        static Result make_err(T val)
+        {
+            Result r;
+            r.m_payload = val;
+            r.m_is_ok = false;
+            return r;
+        }
+
+        bool is_ok() const
+        {
+            return m_is_ok;
+        }
+
+        T *ok() const
+        {
+            return m_is_ok ? &m_payload : NULL;
+        }
+
+        T *err() const
+        {
+            return m_is_ok ? NULL : &m_payload;
+        }
+
+        ~Result()
+        {
+            m_payload.~T();
+        }
+
+        bool rc_unique() const
+        {
+            return true;
+        };
+
+        void rc_increment()
+        {
+            m_payload.rc_increment();
+        };
+
+        void rc_decrement()
+        {
+            m_payload.rc_decrement();
+        };
+    };
 };

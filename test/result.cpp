@@ -16,9 +16,6 @@ namespace Roc
         const Result<I64, Str> err = Result<I64, Str>::make_err(str);
         TEST(!err.is_ok());
     }
-    /*
-
-    // Won't compile if O and E are the same type
 
     DEFINE_TEST_G(OkSameType, Result)
     {
@@ -33,6 +30,4 @@ namespace Roc
         const Result<Str, Str> err = Result<Str, Str>::make_err(str);
         TEST(!err.is_ok());
     }
-
-    */
 };
