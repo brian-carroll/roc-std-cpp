@@ -78,9 +78,42 @@ namespace Roc
         }
     };
 
+    /*
+     * At the moment, Roc's Dict is just an association list. Its lookups are O(n) but
+     * we haven't grown such big programs that it's a problem yet!
+     *
+     * We use a union for [`DictItem`] instead of just a struct. See the
+     * comment on that data structure for why.
+     */
     template <typename K, typename V>
     class Dict
     {
         List<DictItem<K, V>> list;
+
+    public:
+        Dict(size_t capacity = 0) : list(NULL, 0, capacity) {}
+
+        V *get(const K *key)
+        {
+            DictItem<K, V> *items = list.elements();
+            for (size_t i = 0; i < list.length(); ++i)
+            {
+                DictItem<K, V> *item = items + i;
+                K *k = item->key();
+                if (*k == *key)
+                    return item->value();
+            }
+            return NULL;
+        }
+
+        void insert(K key, V value)
+        {
+            DictItem<K, V> item = DictItem<K, V>(key, value);
+            V *existing_value = get(key);
+            if (existing_value)
+                *existing_value = value;
+            else
+                list.push(item);
+        }
     };
 };
