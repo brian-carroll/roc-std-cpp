@@ -63,6 +63,20 @@ namespace Roc
             }
         }
 
+        ~DictItem()
+        {
+            if (LAYOUT_KEY_FIRST<K, V>)
+            {
+                key_first.key.~K();
+                key_first.value.~V();
+            }
+            else
+            {
+                value_first.value.~V();
+                value_first.key.~K();
+            }
+        }
+
         K *key() const
         {
             return LAYOUT_KEY_FIRST<K, V>
