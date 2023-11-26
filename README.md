@@ -20,4 +20,4 @@ Current progress
 - [ ] Dict
 - [ ] Set
 - [x] Box
-- [ ] Result
+- [x] Result

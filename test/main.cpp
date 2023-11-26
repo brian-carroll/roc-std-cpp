@@ -7,6 +7,7 @@
 #include "list.cpp"
 #include "box.cpp"
 #include "dict.cpp"
+#include "result.cpp"
 
 int main(int argc, char **argv)
 {
