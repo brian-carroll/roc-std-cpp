@@ -24,6 +24,7 @@ namespace Roc
 
         TEST_EQ(dict.length(), 5);
         TEST_EQ(dict.capacity(), 5);
+        TEST(!(DICT_KEY_FIRST<I16, Str>));
     }
 
     DEFINE_TEST_G(StrI16, Dict)
@@ -42,6 +43,7 @@ namespace Roc
         }
         TEST_EQ(dict.length(), 5);
         TEST_EQ(dict.capacity(), 5);
+        TEST((DICT_KEY_FIRST<Str, I16>));
     }
 
     DEFINE_TEST_G(I16I16, Dict)

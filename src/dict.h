@@ -21,7 +21,7 @@ namespace Roc
     };
 
     template <typename K, typename V>
-    const bool LAYOUT_KEY_FIRST = __alignof__(K) >= __alignof__(V);
+    const bool DICT_KEY_FIRST = alignof(K) >= alignof(V);
 
     /*
      * Roc is constructing these values according to its memory layout rules.
@@ -47,7 +47,7 @@ namespace Roc
 
         DictItem(K key, V value)
         {
-            if (LAYOUT_KEY_FIRST<K, V>)
+            if (DICT_KEY_FIRST<K, V>)
             {
                 key_first = {
                     .key = key,
@@ -65,7 +65,7 @@ namespace Roc
 
         ~DictItem()
         {
-            if (LAYOUT_KEY_FIRST<K, V>)
+            if (DICT_KEY_FIRST<K, V>)
             {
                 key_first.key.~K();
                 key_first.value.~V();
@@ -79,14 +79,14 @@ namespace Roc
 
         K *key()
         {
-            return LAYOUT_KEY_FIRST<K, V>
+            return DICT_KEY_FIRST<K, V>
                        ? &key_first.key
                        : &value_first.key;
         }
 
         V *value()
         {
-            return LAYOUT_KEY_FIRST<K, V>
+            return DICT_KEY_FIRST<K, V>
                        ? &key_first.value
                        : &value_first.value;
         }
