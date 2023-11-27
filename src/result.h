@@ -47,13 +47,13 @@ namespace Roc
         Result(const Result &other)
             : m_payload(other.m_payload), m_is_ok(other.m_is_ok)
         {
-            rc_increment();
         }
 
         static Result make_ok(O val)
         {
             Result r(true);
             r.m_payload.ok = val;
+            val.rc_increment();
             return r;
         }
 
@@ -61,6 +61,7 @@ namespace Roc
         {
             Result r(false);
             r.m_payload.err = val;
+            val.rc_increment();
             return r;
         }
 
@@ -81,14 +82,6 @@ namespace Roc
 
         ~Result()
         {
-            if (m_is_ok)
-            {
-                m_payload.ok.~O();
-            }
-            else
-            {
-                m_payload.err.~E();
-            }
             rc_decrement();
         }
 

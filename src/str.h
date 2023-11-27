@@ -75,11 +75,7 @@ namespace Roc
 
         ~Str()
         {
-            if (!is_small_str())
-            {
-                char *allocation = big.bytes - REFCOUNT_SIZE;
-                roc_dealloc(allocation, REFCOUNT_SIZE);
-            }
+            rc_decrement();
         }
 
         bool is_small_str() const
@@ -101,7 +97,7 @@ namespace Roc
                        : big.capacity;
         }
 
-        const char* contents() const
+        const char *contents() const
         {
             return is_small_str() ? small : big.bytes;
         }
@@ -155,7 +151,7 @@ namespace Roc
             }
         }
 
-        bool operator== (const Str &other) const
+        bool operator==(const Str &other) const
         {
             if (length() != other.length())
                 return false;

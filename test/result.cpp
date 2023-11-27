@@ -10,6 +10,7 @@ namespace Roc
         const Result<Str, I64> ok = Result<Str, I64>::make_ok(str);
         TEST(ok.is_ok());
     }
+
     DEFINE_TEST_G(Err, Result)
     {
         const Str str("Oops, this long string is about a nasty error!");
